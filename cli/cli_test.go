@@ -60,24 +60,26 @@ func TestShouldReturnErrorWhenExecuteCreateCmdWithoutModulename(t *testing.T) {
 }
 
 func TestShouldReturnNoErrorWhenExecuteBuildCmd(t *testing.T) {
-	filename := `somethingbuild`
-	args := []string{"fast", "build", filename}
-	c := &schema{
-		args: args,
-	}
+	if os.Getenv("ENABLED_TEST_CLI_BUILD") == "true" {
+		filename := `somethingbuild`
+		args := []string{"fast", "build", filename}
+		c := &schema{
+			args: args,
+		}
 
-	err := c.createCmd()
-	if err != nil {
-		t.Errorf(`Expected no error, but got "%s"`, err.Error())
-	}
+		err := c.createCmd()
+		if err != nil {
+			t.Errorf(`Expected no error, but got "%s"`, err.Error())
+		}
 
-	err = c.buildCmd()
-	if err != nil {
-		t.Errorf(`Expected no error, but got "%s"`, err.Error())
-	}
+		err = c.buildCmd()
+		if err != nil {
+			t.Errorf(`Expected no error, but got "%s"`, err.Error())
+		}
 
-	tearDownGo(filename)
-	tearDownSo(filename)
+		tearDownGo(filename)
+		tearDownSo(filename)
+	}
 }
 
 func TestShouldReturnErrorWhenExecuteBuildCmdWithoutModulename(t *testing.T) {
@@ -93,24 +95,26 @@ func TestShouldReturnErrorWhenExecuteBuildCmdWithoutModulename(t *testing.T) {
 }
 
 func TestShouldReturnNoErrorWhenExecuteRemoveCmd(t *testing.T) {
-	args := []string{"fast", "rm", "somethingrm"}
-	c := &schema{
-		args: args,
-	}
+	if os.Getenv("ENABLED_TEST_CLI_RM") == "true" {
+		args := []string{"fast", "rm", "somethingrm"}
+		c := &schema{
+			args: args,
+		}
 
-	err := c.createCmd()
-	if err != nil {
-		t.Errorf(`Expected no error, but got "%s"`, err.Error())
-	}
+		err := c.createCmd()
+		if err != nil {
+			t.Errorf(`Expected no error, but got "%s"`, err.Error())
+		}
 
-	err = c.buildCmd()
-	if err != nil {
-		t.Errorf(`Expected no error, but got "%s"`, err.Error())
-	}
+		err = c.buildCmd()
+		if err != nil {
+			t.Errorf(`Expected no error, but got "%s"`, err.Error())
+		}
 
-	err = c.removeCmd()
-	if err != nil {
-		t.Errorf(`Expected no error, but got "%s"`, err.Error())
+		err = c.removeCmd()
+		if err != nil {
+			t.Errorf(`Expected no error, but got "%s"`, err.Error())
+		}
 	}
 }
 
@@ -196,37 +200,41 @@ func TestShouldReturnNoErrorAndExecuteCreateCmdWhenExecCommandIsCalled(t *testin
 }
 
 func TestShouldReturnNoErrorAndExecuteBuildCmdWhenExecCommandIsCalled(t *testing.T) {
-	filename := `somethingbuild`
-	args := []string{"fast", "build", filename}
-	c := &schema{
-		args: args,
-	}
+	if os.Getenv("ENABLED_TEST_CLI_BUILD") == "true" {
+		filename := `somethingbuild`
+		args := []string{"fast", "build", filename}
+		c := &schema{
+			args: args,
+		}
 
-	err := c.createCmd()
-	if err != nil {
-		t.Errorf(`Expected no error, but got "%s"`, err.Error())
-	}
+		err := c.createCmd()
+		if err != nil {
+			t.Errorf(`Expected no error, but got "%s"`, err.Error())
+		}
 
-	err = c.execCommand()
-	if err != nil {
-		t.Errorf(`Expected no error, but got "%s"`, err.Error())
-	}
+		err = c.execCommand()
+		if err != nil {
+			t.Errorf(`Expected no error, but got "%s"`, err.Error())
+		}
 
-	tearDownGo(filename)
-	tearDownSo(filename)
+		tearDownGo(filename)
+		tearDownSo(filename)
+	}
 }
 
 func TestShouldReturnNoErrorAndExecuteRemoveCmdWhenExecCommandIsCalled(t *testing.T) {
-	args := []string{"fast", "rm", "yoo"}
-	c := &schema{
-		args: args,
-	}
+	if os.Getenv("ENABLED_TEST_CLI_RM") == "true" {
+		args := []string{"fast", "rm", "yoo"}
+		c := &schema{
+			args: args,
+		}
 
-	_ = c.createCmd()
-	_ = c.buildCmd()
+		_ = c.createCmd()
+		_ = c.buildCmd()
 
-	err := c.execCommand()
-	if err != nil {
-		t.Errorf(`Expected no error, but got "%s"`, err.Error())
+		err := c.execCommand()
+		if err != nil {
+			t.Errorf(`Expected no error, but got "%s"`, err.Error())
+		}
 	}
 }

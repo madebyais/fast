@@ -7,6 +7,11 @@ go:
   - 1.9.x
   - 1.10.x
 
+env:
+  global:
+    - ENABLED_TEST_CLI_BUILD=false
+    - ENABLED_TEST_CLI_RM=false
+
 script:
   - ./.travis-test.sh
 
