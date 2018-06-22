@@ -6,13 +6,15 @@ import (
 	"testing"
 )
 
-func tearDown(filename string) {
+func tearDownGo(filename string) {
 	err := os.Remove(`./` + filename + `.go`)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+}
 
-	err = os.Remove(`./` + filename + `.so`)
+func tearDownSo(filename string) {
+	err := os.Remove(`./` + filename + `.so`)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
@@ -42,7 +44,7 @@ func TestShouldReturnNoErrorWhenExecuteCreateCmd(t *testing.T) {
 		t.Errorf(`Expected no error, but got "%s"`, err.Error())
 	}
 
-	tearDown(filename)
+	tearDownGo(filename)
 }
 
 func TestShouldReturnErrorWhenExecuteCreateCmdWithoutModulename(t *testing.T) {
@@ -58,19 +60,24 @@ func TestShouldReturnErrorWhenExecuteCreateCmdWithoutModulename(t *testing.T) {
 }
 
 func TestShouldReturnNoErrorWhenExecuteBuildCmd(t *testing.T) {
-	filename := `something`
+	filename := `somethingbuild`
 	args := []string{"fast", "build", filename}
 	c := &schema{
 		args: args,
 	}
 
-	_ = c.createCmd()
-	err := c.buildCmd()
+	err := c.createCmd()
 	if err != nil {
 		t.Errorf(`Expected no error, but got "%s"`, err.Error())
 	}
 
-	tearDown(filename)
+	err = c.buildCmd()
+	if err != nil {
+		t.Errorf(`Expected no error, but got "%s"`, err.Error())
+	}
+
+	tearDownGo(filename)
+	tearDownSo(filename)
 }
 
 func TestShouldReturnErrorWhenExecuteBuildCmdWithoutModulename(t *testing.T) {
@@ -86,15 +93,22 @@ func TestShouldReturnErrorWhenExecuteBuildCmdWithoutModulename(t *testing.T) {
 }
 
 func TestShouldReturnNoErrorWhenExecuteRemoveCmd(t *testing.T) {
-	args := []string{"fast", "rm", "something"}
+	args := []string{"fast", "rm", "somethingrm"}
 	c := &schema{
 		args: args,
 	}
 
-	_ = c.createCmd()
-	_ = c.buildCmd()
+	err := c.createCmd()
+	if err != nil {
+		t.Errorf(`Expected no error, but got "%s"`, err.Error())
+	}
 
-	err := c.removeCmd()
+	err = c.buildCmd()
+	if err != nil {
+		t.Errorf(`Expected no error, but got "%s"`, err.Error())
+	}
+
+	err = c.removeCmd()
 	if err != nil {
 		t.Errorf(`Expected no error, but got "%s"`, err.Error())
 	}
@@ -125,14 +139,18 @@ func TestShouldReturnErrorWhenExecuteRemoveCmdIfGoFileNotFound(t *testing.T) {
 }
 
 func TestShouldReturnErrorWhenExecuteRemoveCmdIfSoFileNotFound(t *testing.T) {
-	args := []string{"fast", "rm", "something"}
+	filename := `somethingrm`
+	args := []string{"fast", "rm", filename}
 	c := &schema{
 		args: args,
 	}
 
-	_ = c.createCmd()
+	err := c.createCmd()
+	if err != nil {
+		t.Errorf(`Expected no error, but got "%s"`, err.Error())
+	}
 
-	err := c.removeCmd()
+	err = c.removeCmd()
 	if err == nil {
 		t.Errorf(`Expected an error, but got nothing`)
 	}
@@ -163,7 +181,7 @@ func TestShouldReturnNoErrorAndExecuteDefaultCmdWhenExecCommandIsCalledWithAnyAr
 }
 
 func TestShouldReturnNoErrorAndExecuteCreateCmdWhenExecCommandIsCalled(t *testing.T) {
-	filename := `something`
+	filename := `somethingcreate`
 	args := []string{"fast", "create", filename}
 	c := &schema{
 		args: args,
@@ -174,23 +192,28 @@ func TestShouldReturnNoErrorAndExecuteCreateCmdWhenExecCommandIsCalled(t *testin
 		t.Errorf(`Expected no error, but got "%s"`, err.Error())
 	}
 
-	tearDown(filename)
+	tearDownGo(filename)
 }
 
 func TestShouldReturnNoErrorAndExecuteBuildCmdWhenExecCommandIsCalled(t *testing.T) {
-	filename := `something`
+	filename := `somethingbuild`
 	args := []string{"fast", "build", filename}
 	c := &schema{
 		args: args,
 	}
 
-	_ = c.createCmd()
-	err := c.execCommand()
+	err := c.createCmd()
 	if err != nil {
 		t.Errorf(`Expected no error, but got "%s"`, err.Error())
 	}
 
-	tearDown(filename)
+	err = c.execCommand()
+	if err != nil {
+		t.Errorf(`Expected no error, but got "%s"`, err.Error())
+	}
+
+	tearDownGo(filename)
+	tearDownSo(filename)
 }
 
 func TestShouldReturnNoErrorAndExecuteRemoveCmdWhenExecCommandIsCalled(t *testing.T) {
