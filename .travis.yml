@@ -1,0 +1,17 @@
+dist: trusty
+
+language: go
+
+go:
+  - 1.8.x
+  - 1.9.x
+  - 1.10.x
+
+install:
+  - glide install
+
+script:
+  - ./.travis-test.sh
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash) -t 17d1be98-bf68-4f2e-a775-2bb78b4b6d9f
