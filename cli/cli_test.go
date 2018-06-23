@@ -20,6 +20,14 @@ func tearDownSo(filename string) {
 	}
 }
 
+func TestNewCli(t *testing.T) {
+	c := New()
+
+	if c == nil {
+		t.Errorf(`Expected no error, but got error`)
+	}
+}
+
 func TestShouldReturnNoErrorWhenExecuteHelpCmd(t *testing.T) {
 	args := []string{"fast"}
 	c := &schema{
@@ -60,26 +68,31 @@ func TestShouldReturnErrorWhenExecuteCreateCmdWithoutModulename(t *testing.T) {
 }
 
 func TestShouldReturnNoErrorWhenExecuteBuildCmd(t *testing.T) {
-	if os.Getenv("ENABLED_TEST_CLI_BUILD") == "true" {
-		filename := `somethingbuild`
-		args := []string{"fast", "build", filename}
-		c := &schema{
-			args: args,
-		}
-
-		err := c.createCmd()
-		if err != nil {
-			t.Errorf(`Expected no error, but got "%s"`, err.Error())
-		}
-
-		err = c.buildCmd()
-		if err != nil {
-			t.Errorf(`Expected no error, but got "%s"`, err.Error())
-		}
-
-		tearDownGo(filename)
-		tearDownSo(filename)
+	filename := `somethingbuild`
+	args := []string{"fast", "build", filename}
+	c := &schema{
+		args: args,
 	}
+
+	err := c.createCmd()
+	if err != nil {
+		t.Errorf(`Expected no error, but got "%s"`, err.Error())
+	}
+
+	err = c.buildCmd()
+
+	if c.cmd != `build` {
+		t.Errorf(`Expected "build", but got "%s"`, c.cmd)
+	}
+
+	if os.Getenv("ENABLED_TEST_CLI_BUILD") == "true" {
+		if err != nil {
+			t.Errorf(`Expected no error, but got "%s"`, err.Error())
+		}
+	}
+
+	tearDownGo(filename)
+	tearDownSo(filename)
 }
 
 func TestShouldReturnErrorWhenExecuteBuildCmdWithoutModulename(t *testing.T) {
@@ -95,26 +108,22 @@ func TestShouldReturnErrorWhenExecuteBuildCmdWithoutModulename(t *testing.T) {
 }
 
 func TestShouldReturnNoErrorWhenExecuteRemoveCmd(t *testing.T) {
-	if os.Getenv("ENABLED_TEST_CLI_RM") == "true" {
-		args := []string{"fast", "rm", "somethingrm"}
-		c := &schema{
-			args: args,
-		}
+	filename := `somethingrm`
+	args := []string{"fast", "rm", filename}
+	c := &schema{
+		args: args,
+	}
 
-		err := c.createCmd()
-		if err != nil {
-			t.Errorf(`Expected no error, but got "%s"`, err.Error())
-		}
+	_ = c.createCmd()
 
-		err = c.buildCmd()
-		if err != nil {
-			t.Errorf(`Expected no error, but got "%s"`, err.Error())
-		}
+	_, err := os.Create(`./` + filename + `.so`)
+	if err != nil {
+		t.Errorf(`Expected no error, but got "%s"`, err.Error())
+	}
 
-		err = c.removeCmd()
-		if err != nil {
-			t.Errorf(`Expected no error, but got "%s"`, err.Error())
-		}
+	err = c.removeCmd()
+	if err != nil {
+		t.Errorf(`Expected no error, but got "%s"`, err.Error())
 	}
 }
 
@@ -200,41 +209,49 @@ func TestShouldReturnNoErrorAndExecuteCreateCmdWhenExecCommandIsCalled(t *testin
 }
 
 func TestShouldReturnNoErrorAndExecuteBuildCmdWhenExecCommandIsCalled(t *testing.T) {
-	if os.Getenv("ENABLED_TEST_CLI_BUILD") == "true" {
-		filename := `somethingbuild`
-		args := []string{"fast", "build", filename}
-		c := &schema{
-			args: args,
-		}
-
-		err := c.createCmd()
-		if err != nil {
-			t.Errorf(`Expected no error, but got "%s"`, err.Error())
-		}
-
-		err = c.execCommand()
-		if err != nil {
-			t.Errorf(`Expected no error, but got "%s"`, err.Error())
-		}
-
-		tearDownGo(filename)
-		tearDownSo(filename)
+	filename := `somethingbuild`
+	args := []string{"fast", "build", filename}
+	c := &schema{
+		args: args,
 	}
+
+	err := c.createCmd()
+	if err != nil {
+		t.Errorf(`Expected no error, but got "%s"`, err.Error())
+	}
+
+	err = c.buildCmd()
+
+	if c.cmd != `build` {
+		t.Errorf(`Expected "build", but got "%s"`, c.cmd)
+	}
+
+	if os.Getenv("ENABLED_TEST_CLI_BUILD") == "true" {
+		if err != nil {
+			t.Errorf(`Expected no error, but got "%s"`, err.Error())
+		}
+	}
+
+	tearDownGo(filename)
+	tearDownSo(filename)
 }
 
 func TestShouldReturnNoErrorAndExecuteRemoveCmdWhenExecCommandIsCalled(t *testing.T) {
-	if os.Getenv("ENABLED_TEST_CLI_RM") == "true" {
-		args := []string{"fast", "rm", "yoo"}
-		c := &schema{
-			args: args,
-		}
+	filename := `yoo`
+	args := []string{"fast", "rm", filename}
+	c := &schema{
+		args: args,
+	}
 
-		_ = c.createCmd()
-		_ = c.buildCmd()
+	_ = c.createCmd()
 
-		err := c.execCommand()
-		if err != nil {
-			t.Errorf(`Expected no error, but got "%s"`, err.Error())
-		}
+	_, err := os.Create(`./` + filename + `.so`)
+	if err != nil {
+		t.Errorf(`Expected no error, but got "%s"`, err.Error())
+	}
+
+	err = c.execCommand()
+	if err != nil {
+		t.Errorf(`Expected no error, but got "%s"`, err.Error())
 	}
 }
