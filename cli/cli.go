@@ -7,6 +7,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/madebyais/fast/config"
 )
 
 // Interface is an interface for cli package
@@ -38,20 +40,20 @@ func (s *schema) Init() {
 // passed through the FAST cli
 func (s *schema) execCommand() error {
 	if len(s.args) == 1 {
-		return s.helpCmd()
+		return s.startCmd()
 	}
 
 	switch s.args[1] {
 	default:
-		return s.helpCmd()
+		return s.startCmd()
 	case `create`:
 		return s.createCmd()
 	case `build`:
 		return s.buildCmd()
 	case `rm`:
 		return s.removeCmd()
-	case `start`:
-		return s.startCmd()
+	case `help`:
+		return s.helpCmd()
 	}
 }
 
@@ -140,5 +142,8 @@ func (s *schema) removeCmd() error {
 // startCmd will start the FAST server
 func (s *schema) startCmd() error {
 	s.cmd = `start`
-	return errors.New(`please work on this`)
+
+	config.New()
+
+	return nil
 }

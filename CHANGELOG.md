@@ -1,6 +1,9 @@
 CHANGE LOG
 ----------
 
+##### 0.2.0
+- Added config package
+
 ##### 0.1.1
 - Added travis-ci and codecov integration
 

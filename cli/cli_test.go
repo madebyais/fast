@@ -169,30 +169,6 @@ func TestShouldReturnErrorWhenExecuteRemoveCmdIfSoFileNotFound(t *testing.T) {
 	}
 }
 
-func TestShouldReturnNoErrorWhenExecCommandIsCalledWithoutAnyArguments(t *testing.T) {
-	args := []string{"fast"}
-	c := &schema{
-		args: args,
-	}
-
-	err := c.execCommand()
-	if err != nil {
-		t.Errorf(`Expected no error, but got "%s"`, err.Error())
-	}
-}
-
-func TestShouldReturnNoErrorAndExecuteDefaultCmdWhenExecCommandIsCalledWithAnyArguments(t *testing.T) {
-	args := []string{"fast", "madebyais"}
-	c := &schema{
-		args: args,
-	}
-
-	err := c.execCommand()
-	if err != nil {
-		t.Errorf(`Expected no error, but got "%s"`, err.Error())
-	}
-}
-
 func TestShouldReturnNoErrorAndExecuteCreateCmdWhenExecCommandIsCalled(t *testing.T) {
 	filename := `somethingcreate`
 	args := []string{"fast", "create", filename}
