@@ -22,11 +22,12 @@ func New() {
 	configpath := flag.String(`config`, `/etc/fast.yml`, `Set fast config path. Default: /etc/fast.yml`)
 	flag.Parse()
 
-	s := &Schema{}
-	load(*configpath, s)
+	load(*configpath)
 }
 
-func load(configpath string, s *Schema) {
+func load(configpath string) {
+	s := &Schema{}
+
 	k := kilde.New()
 	k.SetSchema(s)
 	k.SetConfigType(`yaml`)
@@ -47,6 +48,5 @@ func Get() *Schema {
 
 // Reload is used to reload application config
 func Reload(configpath string) {
-	s := &Schema{}
-	load(configpath, s)
+	load(configpath)
 }
