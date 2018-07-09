@@ -19,21 +19,22 @@ var globalconf *Schema
 
 // New is used to initiate config package
 func New() {
-	s := &Schema{}
-
-	env := flag.String(`env`, `default`, `Set application environment. Default: default`)
 	configpath := flag.String(`config`, `/etc/fast.yml`, `Set fast config path. Default: /etc/fast.yml`)
 	flag.Parse()
 
+	s := &Schema{}
+	load(*configpath, s)
+}
+
+func load(configpath string, s *Schema) {
 	k := kilde.New()
 	k.SetSchema(s)
 	k.SetConfigType(`yaml`)
-	k.SetFilePath(*configpath)
-	k.SetEnv(*env)
+	k.SetFilePath(configpath)
 
 	err := k.Read()
 	if err != nil {
-		log.Fatalf(`Failed to read config. Error=%s`, err.Error())
+		log.Fatalf(`Failed to read config. Please make sure that you have set config path. Error=%s`, err.Error())
 	}
 
 	globalconf = s
@@ -42,4 +43,10 @@ func New() {
 // Get returns the current loaded config
 func Get() *Schema {
 	return globalconf
+}
+
+// Reload is used to reload application config
+func Reload(configpath string) {
+	s := &Schema{}
+	load(configpath, s)
 }
