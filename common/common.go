@@ -1,6 +1,19 @@
-package cli
+package common
 
-var helpTextPage = `
+// LogoText is a text logo
+var LogoText = `
+  	          ____________   _____________   _____________  _ _____________
+  	    ___ _/           /  /            /  /   _________/  /             /
+  	        /   ________/ _/    ____    /  /   /_________  /____     ____/
+  	  _ ___/   /_______   /    /   /   /  /________     /      /    /
+  	      /           /  /    /___/   /       _ __/    /     _/    /
+  	     /    _______/  /    ____    /  _________/    /  _ __/    /
+  	   _/    /      __ /    /   /   /  /     _    _ _/      /    /
+	__ /____/         /____/   /___/  /_____________/      /____/
+`
+
+// HelpTextPage is the help text content
+var HelpTextPage = `
             ____________   _____________   _____________  _ _____________
       ___ _/           /  /            /  /   _________/  /             /
           /   ________/ _/    ____    /  /   /_________  /____     ____/
@@ -30,17 +43,21 @@ var helpTextPage = `
     This "start" command will start the FAST server
 `
 
-var defaultModuleFile = `package main
+// DefaultModuleFile is the default content of module file
+var DefaultModuleFile = `package main
 
 import (
   "net/http"
-  "github.com/labstack/echo"
 )
 
 type {module_name} struct{}
 
-func (m *{module_name}) Call(ctx echo.Context) error {
-  return ctx.String(http.StatusOK, "Hello world.")
+func (m *{module_name}) Call() (interface{}, error) {
+  response := make(map[string]interface{})
+  response["code"] = http.StatusOK
+  response["data"] = m
+  
+  return response, nil
 }
 
 var {module_title} {module_name}

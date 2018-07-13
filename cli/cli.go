@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/madebyais/fast/app"
+	"github.com/madebyais/fast/common"
 	"github.com/madebyais/fast/config"
 )
 
@@ -62,7 +64,7 @@ func (s *schema) execCommand() error {
 func (s *schema) helpCmd() error {
 	s.cmd = `help`
 
-	fmt.Println(helpTextPage)
+	fmt.Println(common.HelpTextPage)
 	return nil
 }
 
@@ -77,16 +79,19 @@ func (s *schema) createCmd() error {
 	}
 
 	moduleName := s.args[2]
-	moduleContent := strings.Replace(defaultModuleFile, `{module_name}`, moduleName, -1)
+	moduleContent := strings.Replace(common.DefaultModuleFile, `{module_name}`, moduleName, -1)
 
 	moduleTitle := strings.ToTitle(moduleName)
 	moduleContent = strings.Replace(moduleContent, `{module_title}`, moduleTitle, -1)
 
-	filename := fmt.Sprintf(`./%s.go`, moduleName)
-	err := ioutil.WriteFile(filename, []byte(moduleContent), 0644)
+	filename := fmt.Sprintf(`%s.go`, moduleName)
+	filepath := fmt.Sprintf(`./%s`, filename)
+	err := ioutil.WriteFile(filepath, []byte(moduleContent), 0644)
 	if err != nil {
 		return err
 	}
+
+	fmt.Println(`Your`, moduleTitle, `module has been created successfully. Generated filename ~>`, filename)
 
 	return nil
 }
@@ -109,6 +114,9 @@ func (s *schema) buildCmd() error {
 	if err != nil {
 		return err
 	}
+
+	moduleTitle := strings.ToTitle(moduleName)
+	fmt.Println(`Your`, moduleTitle, `module has been build successfully. Generated filename ~>`, sofilename)
 
 	return nil
 }
@@ -144,6 +152,7 @@ func (s *schema) startCmd() error {
 	s.cmd = `start`
 
 	config.New()
+	app.New().Start()
 
 	return nil
 }
